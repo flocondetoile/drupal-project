@@ -15,6 +15,10 @@ use Webmozart\PathUtil\Path;
 
 class ScriptHandler {
 
+  protected static function getDrupalRoot($project_root) {
+    return $project_root .  '/web';
+  }
+
   public static function createRequiredFiles(Event $event) {
     $fs = new Filesystem();
     $drupalFinder = new DrupalFinder();
@@ -95,6 +99,12 @@ class ScriptHandler {
       $io->writeError('<error>Drupal-project requires Composer version 1.0.0 or higher. Please update your Composer before continuing</error>.');
       exit(1);
     }
+  }
+
+  public static function removeGitDirectories(Event $event) {
+    $root = static::getDrupalRoot(getcwd());
+    exec('find ' . $root . ' -name \'.git\' | xargs rm -rf');
+    exec('find ' . $root . ' -name \'.gitignore\' | xargs rm -rf');
   }
 
 }
